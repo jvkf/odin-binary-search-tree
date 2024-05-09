@@ -72,11 +72,76 @@ export default class Tree {
 
     return node;
   }
+
   getMinValue(node) {
     let current = node;
     while (current.left !== null) {
       current = current.left;
     }
     return current.value;
+  }
+
+  find(value, node = this.root) {
+    if (node === null) return null;
+
+    if (value > node.value) {
+      return this.find(value, node.right);
+    } else if (value < node.value) {
+      return this.find(value, node.left);
+    } else return node;
+  }
+
+  levelOrderCallback(callback = null, node = this.root) {
+    if (node === null) return null;
+    const results = [];
+    const queue = [node];
+
+    while (queue.length > 0) {
+      const node = queue.shift();
+
+      if (typeof callback === "function") {
+        callback(node);
+      }
+      results.push(node);
+
+      if (node.left !== null) {
+        queue.push(node.left);
+      }
+      if (node.right !== null) {
+        queue.push(node.right);
+      }
+    }
+
+    return results;
+  }
+  inorderTraversal(callback = null, node = this.root) {
+    if (node === null) return [];
+    const results = [];
+    const stack = [];
+    let temp = node;
+
+    while (stack.length > 0 || temp !== null) {
+      if (temp !== null) {
+        stack.push(temp);
+        temp = temp.left;
+      } else {
+        const poppedNode = stack.pop();
+        if (typeof callback === "function") {
+          callback(poppedNode);
+        }
+        results.push(poppedNode.value);
+        temp = poppedNode.right;
+      }
+    }
+
+    return results;
+  }
+  inorderRecursive(callback = null, node = this.root, results = []) {
+    if (node !== null) {
+      this.inorderRecursive(node.left);
+      if (typeof callback === "function") callback(node);
+      results.push(node);
+      this.inorderRecursive(node.right);
+    }
   }
 }
