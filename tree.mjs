@@ -51,14 +51,13 @@ export default class Tree {
       }
     }
   }
-  deleteNode(value) {
-    if (this.root === null) return null;
-    let node = this.root;
+  deleteNode(value, node = this.root) {
+    if (node === null) return null;
 
     if (value > node.value) {
-      node.right = this.deleteNode(node.right);
+      node.right = this.deleteNode(value, node.right);
     } else if (value < node.value) {
-      node.left = this.deleteNode(node.left);
+      node.left = this.deleteNode(value, node.left);
     } else {
       if (node.left === null) {
         return node.right;
@@ -68,20 +67,16 @@ export default class Tree {
 
       const minValue = this.getMinValue(node.right);
       node.value = minValue;
-      node.right = this.deleteNode(minValue);
+      node.right = this.deleteNode(minValue, node.right);
     }
 
     return node;
   }
   getMinValue(node) {
-    let minValue = node.value;
-    while (node !== null) {
-      if (minValue > node.value) {
-        minValue = node.value;
-      }
-      node = node.left;
+    let current = node;
+    while (current.left !== null) {
+      current = current.left;
     }
-
-    return minValue;
+    return current.value;
   }
 }
